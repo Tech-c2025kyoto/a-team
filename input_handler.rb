@@ -20,18 +20,25 @@ class InputHandler
 
       guess = []
       duplicate_found = false
+      invalid_found = false
 
       #重複した数値があるかどうかチェック
       inputs.each do |s|
-        num = Integer(s)
-        if guess.include?(num) # guess配列にその数値が含まれているかどうか
+        begin
+          num = Integer(s)
+        rescue ArgumentError
+          puts '入力エラー: 数字のみをスペース区切りで入力してください。'
+          invalid_found = true
+          break
+        end
+        if guess.include?(num)
           puts '入力エラー: 重複した数字があります。'
           duplicate_found = true
           break
         end
         guess << num
       end
-      next if duplicate_found
+      next if duplicate_found || invalid_found
       return guess
     end
   end
