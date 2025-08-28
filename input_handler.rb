@@ -5,21 +5,31 @@ class InputHandler
 
   def get_user_input()
     loop do
-      print "数字を3桁入力してください（スペース区切り）: "
-      line = @stdin.gets&.chomp.to_s #ユーザーが入力した値が文字列で取得される
-      inputs = line.split(' ') # 入力されたスペースが
+      print "数字を3桁入力してください（スペース区切りまたは連続入力）: "
+      line = @stdin.gets&.chomp.to_s
+      # スペース区切りか、連続入力か判定
+      if line.include?(' ')
+        inputs = line.split(' ')
+      else
+        inputs = line.chars
+      end
       if inputs.length != 3
         puts '桁数が正しくありません。'
-        next #もう一度最初から
+        next
       end
 
       guess = []
       duplicate_found = false
 
-      #重複した数値があるかどうかチェック
       inputs.each do |s|
-        num = Integer(s)
-        if guess.include?(num) # guess配列にその数値が含まれているかどうか
+        begin
+          num = Integer(s)
+        rescue ArgumentError
+          puts '入力エラー: 数字のみを入力してください。'
+          duplicate_found = true
+          break
+        end
+        if guess.include?(num)
           puts '入力エラー: 重複した数字があります。'
           duplicate_found = true
           break
