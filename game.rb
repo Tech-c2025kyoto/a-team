@@ -26,7 +26,7 @@ class Game
         puts '正解までの試行回数: ' + (i + 1).to_s + '回'
         break
       elsif remaining == 1
-        puts "ゲームオーバー！正解は #{@answer.join} でした。"
+        puts "ゲームオーバー！正解は #{@answer.join} でした。" #Array.joinメソッド:配列の要素を文字列として結合する
       end
     end
   end
