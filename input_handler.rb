@@ -7,9 +7,14 @@ class InputHandler
     loop do
       print "数字を3桁入力してください（スペース区切り）: "
       line = @stdin.gets&.chomp.to_s #ユーザーが入力した値が文字列で取得される
-      inputs = line.split(' ') # 入力されたスペースが
+      inputs = line.split(' ') # 入力されたスペース区切りの文字列を配列に変換
+
       if inputs.length != 3
-        puts '桁数が正しくありません。'
+        if !line.include?(' ')
+          puts 'スペース区切りで入力してください（例: 1 2 3）'
+        else
+          puts '桁数が正しくありません。'
+        end
         next #もう一度最初から
       end
 
