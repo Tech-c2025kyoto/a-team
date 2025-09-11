@@ -15,11 +15,21 @@ class Game
     max_attempts = 10
     start_time = Time.now # 最大試行回数を設定
 
+    @history = []
+
     max_attempts.times do |i|
+      unless @history.empty?
+        puts "\n--- 過去の入力履歴 ---"
+        @history.each_with_index do |item, index|
+          puts "#{index + 1}回目: 入力: #{item[:guess].join(' ')}, 結果: #{item[:hits]}ヒット, #{item[:blows]}ブロー"
+        end
+        puts "----------------------"
+      end
       remaining = max_attempts - i
       puts "残り試行回数: #{remaining}"
       guess = @input_handler.get_user_input()
       result = @judge.evaluate(@answer, guess)
+      @history << { guess: guess, hits: result.hits, blows: result.blows }
       puts "ヒット: #{result.hits}, ブロー: #{result.blows}"
 
       if result.hits == @answer.length
