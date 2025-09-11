@@ -8,6 +8,7 @@ class Game
     @answer = AnswerGenerator.generate_answer(3) # @はインスタンス変数
     @judge = Judge.new
     @input_handler = InputHandler.new
+    @history = [] # 入力履歴を保持
   end
 
   # 運ゲーイベントを処理するメソッド
@@ -42,24 +43,36 @@ class Game
     puts "=== Hit and Blowゲーム（#{@answer.length}桁）をスタートします ==="
     puts "🎲 今回は運ゲー要素が追加されています！回答後に試行回数が変動する可能性があります！"
     max_attempts = 10
-    start_time = Time.now # 最大試行回数を設定
+    start_time = Time.now # ゲーム開始時刻
     attempts_used = 0
 
     loop do
       attempts_used += 1
+
+      # 入力履歴を表示（2回目以降）
+      unless @history.empty?
+        puts "\n--- 過去の入力履歴 ---"
+        @history.each_with_index do |item, index|
+          puts "#{index + 1}回目: 入力: #{item[:guess].join(' ')}, 結果: #{item[:hits]}ヒット, #{item[:blows]}ブロー"
+        end
+        puts "----------------------"
+      end
+
       remaining = max_attempts - attempts_used + 1
       puts "\n--- 第#{attempts_used}回目の挑戦 ---"
       puts "残り試行回数: #{remaining}"
       
       guess = @input_handler.get_user_input()
       result = @judge.evaluate(@answer, guess)
+      @history << { guess: guess, hits: result.hits, blows: result.blows }
+
       puts "ヒット: #{result.hits}, ブロー: #{result.blows}"
 
       if result.hits == @answer.length
         end_time = Time.now  # ★ゲーム終了時間を記録
         time_taken = (end_time - start_time).round(2)
         puts '🎉 正解です！'
-        puts '正解までの試行回数: ' + attempts_used.to_s + '回'
+        puts "正解までの試行回数: #{attempts_used}回"
         puts "所要時間: #{time_taken}秒"
         break
       end
@@ -75,7 +88,7 @@ class Game
 
       # ゲームオーバー判定
       if attempts_used >= max_attempts
-        puts "\n💥 ゲームオーバー！正解は #{@answer.join} でした。" #Array.joinメソッド:配列の要素を文字列として結合する
+        puts "\n💥 ゲームオーバー！正解は #{@answer.join} でした。" # Array.joinで答えを表示
         end_time = Time.now
         time_taken = (end_time - start_time).round(2)
         puts "スコア: 試行回数 #{attempts_used}回 / 所要時間 #{time_taken}秒"
@@ -84,4 +97,3 @@ class Game
     end
   end
 end
-
